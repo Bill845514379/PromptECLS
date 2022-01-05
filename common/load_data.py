@@ -33,7 +33,7 @@ def generate_template(data_X_1, data_X_2, data_y_1, data_y_2):
             template = cfg['template']
 
             template = template.replace('[X1]', CLS + ' ' + data_X_1[i] + ' ' + SEP)
-            template = template.replace('[X2]', SEP + ' ' + data_X_2[i] + ' ' + SEP)
+            template = template.replace('[X2]', SEP + ' ' + data_X_2[j] + ' ' + SEP)
             template = template.replace('[MASK]', MASK)
 
             data_X.append(template)
@@ -71,5 +71,8 @@ def data_split(data_X, data_y, K=8, Kt=1000):
             test_y.append(test_all_y[i])
 
     return np.array(train_X), np.array(train_y), np.array(test_X), np.array(test_y)
+
+
+
 
 
