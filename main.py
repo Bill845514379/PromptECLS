@@ -29,10 +29,12 @@ for test_id in range(len(seeds)):
     train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg['K'], cfg['Kt'])
     neg_X, neg_y = load_data(path['neg_path'])
     train_neg_X, train_neg_y, test_neg_X, test_neg_y = data_split(neg_X, neg_y, cfg['K'], cfg['Kt'])
-
+    
+    print(train_pos_X)
+    print(train_neg_X)
     train_X = torch.tensor(np.hstack([train_pos_X, train_neg_X]))
     train_y = torch.tensor(np.hstack([train_pos_y, train_neg_y]))
-    test_X = torch.tensor(np.vstack([test_pos_X, test_neg_X]))
+    test_X = torch.tensor(np.hstack([test_pos_X, test_neg_X]))
     test_y = torch.tensor(np.hstack([test_pos_y, test_neg_y]))
 
     train_X, train_y = generate_template(train_X, train_X, train_y, train_y)
