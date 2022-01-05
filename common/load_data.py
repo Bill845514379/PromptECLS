@@ -73,6 +73,3 @@ def data_split(data_X, data_y, K=8, Kt=1000):
     return np.array(train_X), np.array(train_y), np.array(test_X), np.array(test_y)
 
 
-
-
-
