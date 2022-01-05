@@ -6,7 +6,7 @@ cfg = {
     'learning_rate': 1e-5,
     'epoch': 10,
     'K': 8,
-    'Kt': 500,
+    'Kt': 250,
     # 'template': '[X1] [X2]? [MASK].',
     'template': '[X1] ? [MASK] , [X2]',
     'answer': ['No', 'Yes'],
