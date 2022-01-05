@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 
+import numpy as np
 from config.cfg import path, cfg
 from common.util import delete_character, delete_word, reorder_span, reorder_words
 from pytorch_transformers import RobertaTokenizer
@@ -69,7 +70,7 @@ def data_split(data_X, data_y, K=8, Kt=1000):
             test_X.append(test_all_X[i])
             test_y.append(test_all_y[i])
 
-    return train_X, train_y, test_X, test_y
+    return np.array(train_X), np.array(train_y), np.array(test_X), np.array(test_y)
 
 
 
