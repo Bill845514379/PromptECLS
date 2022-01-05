@@ -37,12 +37,13 @@ for test_id in range(len(seeds)):
 
     train_X, train_y = generate_template(train_X, train_X, train_y, train_y)
     test_X, test_y = generate_template(test_X, train_X, test_y, train_y)
-    
+
     train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
     train_y, answer_map = get_answer_id(train_y, tokenizer)
     test_y, _ = get_answer_id(test_y, tokenizer)
-    
+
     train_X, train_y = torch.tensor(train_X), torch.tensor(train_y)
+    test_X, test_y = torch.tensor(test_X), torch.tensor(test_y)
     
     train_data = TensorDataset(train_X, train_y)
     test_data = TensorDataset(test_X, test_y)
