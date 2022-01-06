@@ -58,8 +58,8 @@ for test_id in range(len(seeds)):
     loader_train = DataLoader(
         dataset=train_data,
         batch_size=cfg['train_batch_size'],
-        shuffle=False,
-        num_workers=0,
+        shuffle=True,
+        num_workers=4,
         drop_last=False
     )
 
@@ -67,7 +67,7 @@ for test_id in range(len(seeds)):
         dataset=test_data,
         batch_size=cfg['K'] * 2,
         shuffle=False,
-        num_workers=0,
+        num_workers=4,
         drop_last=False
     )
 
