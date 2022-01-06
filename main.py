@@ -25,7 +25,6 @@ else:
     print('TPU using ....')
     import torch_xla.core.xla_model as xm
     device = xm.xla_device()
-    torch.set_default_tensor_type('torch.FloatTensor')
 
 acc_array = []
 seeds = [10, 100, 1000, 2000, 4000]
