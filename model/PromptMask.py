@@ -15,7 +15,6 @@ else:
     # for TPU
     import torch_xla.core.xla_model as xm
     device = xm.xla_device()
-    torch.set_default_tensor_type('torch.FloatTensor')
 
 class PromptMask(nn.Module):
     def __init__(self):
