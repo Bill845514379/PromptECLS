@@ -14,6 +14,7 @@ class PromptMask(pl.LightningModule):
     def __init__(self, answer_map):
         super(PromptMask, self).__init__()
         self.answer_map = answer_map
+        self.acc = 0
 
         self.roberta = RobertaForMaskedLM.from_pretrained(path['roberta_path'])
 
@@ -41,9 +42,11 @@ class PromptMask(pl.LightningModule):
         return loss
 
     def training_epoch_end(self, outputs):
+        print(outputs)
+        print(len(outputs))
         sum_acc = 0
-        for i in range(len(outputs)):
-            sum_acc += outputs[i]
+        for key in outputs:
+            sum_acc += outputs[key]
         self.log("my_loss", sum_acc / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
     def test_step(self, batch, batch_idx):
