@@ -57,9 +57,15 @@ loader_test = DataLoader(
 )
 
 print('start training ... ')
+print(cfg)
+print(hyper_roberta)
 net = PromptMask(answer_map)
 
-trainer = pl.Trainer(tpu_cores=8, max_epochs=10)
+if cfg['device'] == 'TPU':
+    trainer = pl.Trainer(tpu_cores=8, max_epochs=cfg['epoch'])
+else:
+    trainer = pl.Trainer( max_epochs=cfg['epoch'])
+    
 trainer.fit(net, loader_train)
 print('start testing ... ')
 trainer.test(net, loader_test)
