@@ -59,7 +59,7 @@ for test_id in range(len(seeds)):
         dataset=train_data,
         batch_size=cfg['train_batch_size'],
         shuffle=True,
-        num_workers=4,
+        num_workers=0,
         drop_last=False
     )
 
@@ -67,7 +67,7 @@ for test_id in range(len(seeds)):
         dataset=test_data,
         batch_size=cfg['K'] * 2,
         shuffle=False,
-        num_workers=4,
+        num_workers=0,
         drop_last=False
     )
 
@@ -122,37 +122,26 @@ for test_id in range(len(seeds)):
             batch_x, batch_y = Variable(batch_x).long(), Variable(batch_y).long()
             batch_x, batch_y = batch_x.to(device), batch_y.to(device)
 
-            print('ok1')
+
             output = net(batch_x)
-            print('ok2')
             criterion = nn.CrossEntropyLoss()
-            print('ok3')
             loss = criterion(output, batch_y)
-            print('ok4')
             loss.backward()
-            print('ok5')
-            # torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
+            torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
             optimizer.step()  # 更新权重
-            print('ok6')
             if cfg['optimizer'] == 'AdamW':
                 scheduler.step()
             optimizer.zero_grad()  # 清空梯度缓存
             ave_loss += loss
             batch += 1
-            print('ok7')
-            if batch % 1 == 0:
-                print('ok8', epoch)
-                print('ok9', batch)
-                print('ok10', len(loader_train))
-                print('ok11', round(time.time() - time0, 4))
-                # print('ok12', loss)
-                print('ok13', optimizer.param_groups[0]['lr'])
-                # print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
-                #                                                                          len(loader_train),
-                #                                                                          round(time.time() - time0, 4),
-                #                                                                          loss,
-                #                                                                          optimizer.param_groups[
-                #                                                                              0]['lr']))
+
+            if batch % 8 == 0:
+                print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
+                                                                                         len(loader_train),
+                                                                                         round(time.time() - time0, 4),
+                                                                                         loss,
+                                                                                         optimizer.param_groups[
+                                                                                             0]['lr']))
         # scheduler.step(ave_loss)
         print('------------------ epoch:{} ----------------'.format(i + 1))
         print('train_average_loss{}'.format(ave_loss / len(loader_train)))
