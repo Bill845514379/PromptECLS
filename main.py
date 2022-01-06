@@ -121,7 +121,7 @@ for test_id in range(len(seeds)):
             net.train()
             batch_x, batch_y = Variable(batch_x).long(), Variable(batch_y).long()
             batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-            
+
             print('ok1')
             output = net(batch_x)
             print('ok2')
@@ -140,7 +140,7 @@ for test_id in range(len(seeds)):
             ave_loss += loss
             batch += 1
             print('ok7')
-            if batch % 2 == 0:
+            if batch % 8 == 0:
                 print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
                                                                                          len(loader_train),
                                                                                          round(time.time() - time0, 4),
