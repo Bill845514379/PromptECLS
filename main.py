@@ -151,15 +151,17 @@ for test_id in range(len(seeds)):
                 net.eval()
                 batch_x, batch_y = Variable(batch_x).long(), Variable(batch_y).long()
                 batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-
+                print(batch_x.shape)
+                
                 with torch.no_grad():
                      output = net(batch_x)
-
+                print(output.shape)
+                
                 _, pred = torch.max(output, dim=1)
 
                 pred = pred.cpu().detach().numpy()
                 batch_y = batch_y.cpu().detach().numpy()
-                
+
                 print(len(batch_y))
                 print(pred)
                 print(batch_y)
