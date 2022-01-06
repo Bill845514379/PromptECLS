@@ -22,6 +22,7 @@ if cfg['device'] != 'TPU':
     device = torch.device(cfg['device'])
 else:
     # for TPU
+    print('TPU using ....')
     import torch_xla.core.xla_model as xm
     device = xm.xla_device()
     torch.set_default_tensor_type('torch.FloatTensor')
@@ -178,6 +179,8 @@ for test_id in range(len(seeds)):
                 for j in range(cfg['K'], pred.shape[0]):
                     if pred[j] == answer_map[1]:
                         neg_cc += 1
+                print(pred)
+                print(answer_map)
                 if pos_cc >= neg_cc:
                     label_out.append(1)
                 else:
