@@ -15,10 +15,9 @@ from common.metric import ScorePRF
 from common.set_random_seed import setup_seed
 import time
 
-os.environ["TOKENIZERS_PARALLELISM"] = "true"
-os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
-
 if cfg['device'] != 'TPU':
+    os.environ["TOKENIZERS_PARALLELISM"] = "true"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
     device = torch.device(cfg['device'])
 else:
     # for TPU
