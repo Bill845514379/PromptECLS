@@ -17,7 +17,6 @@ import pytorch_lightning as pl
 import time
 
 
-
 pos_X, pos_y = load_data(path['pos_path'])
 train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg['K'], cfg['Kt'])
 neg_X, neg_y = load_data(path['neg_path'])
@@ -60,5 +59,5 @@ loader_test = DataLoader(
 net = PromptMask(answer_map)
 
 trainer = pl.Trainer()
-trainer.fit(net, train_data)
-trainer.test(net, test_data)
+trainer.fit(net, loader_train)
+trainer.test(net, loader_test)
