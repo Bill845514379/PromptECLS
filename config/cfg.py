@@ -1,16 +1,16 @@
 cfg = {
     'gpu_id': 0,
     'max_len': 220,
-    'train_batch_size': 8,
+    'train_batch_size': 16,
     'test_batch_size': 32,
     'learning_rate': 1e-5,
     'epoch': 10,
-    'K': 8,
+    'K': 16,
     'Kt': 1000,
     # 'template': '[X1] [X2]? [MASK].',
     'template': '[X1] ? [MASK] , [X2]',
     'answer': ['No', 'Yes'],
-    'device': 'TPU',
+    'device': 'cuda',
     'optimizer': 'Adam',
     'word_size': 50265
 }
