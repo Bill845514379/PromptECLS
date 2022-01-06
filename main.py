@@ -141,6 +141,12 @@ for test_id in range(len(seeds)):
             batch += 1
             print('ok7')
             if batch % 8 == 0:
+                print('ok8', epoch)
+                print('ok9', batch)
+                print('ok10', len(loader_train))
+                print('ok11', round(time.time() - time0, 4))
+                print('ok12', loss)
+                print('ok13', optimizer.param_groups[0]['lr'])
                 print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
                                                                                          len(loader_train),
                                                                                          round(time.time() - time0, 4),
