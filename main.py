@@ -179,14 +179,13 @@ for test_id in range(len(seeds)):
                 for j in range(cfg['K'], pred.shape[0]):
                     if pred[j] == answer_map[1]:
                         neg_cc += 1
-                print(pred)
-                print(answer_map)
+
                 if pos_cc >= neg_cc:
                     label_out.append(1)
                 else:
                     label_out.append(0)
-                print(batch_y)
-                if batch_y[0] == 1:
+
+                if batch_y[0] == answer_map[1]:
                     label_y.append(1)
                 else:
                     label_y.append(0)
