@@ -41,10 +41,9 @@ class PromptMask(pl.LightningModule):
         loss = criterion(output, batch_y)
         self.log("train_loss", loss)
 
-        print(self.global_step)
         # Must clear cache at a regular interval
-        if self.global_step % 1 == 0:
-            torch.cuda.empty_cache()
+        # if self.global_step % 10 == 0:
+        #     torch.cuda.empty_cache()
         return loss
 
     def training_epoch_end(self, outputs):
