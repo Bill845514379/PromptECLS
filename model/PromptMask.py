@@ -46,7 +46,7 @@ class PromptMask(pl.LightningModule):
         sum_loss = 0
         for item in outputs:
             sum_loss += item['loss']
-        self.log("my_loss", sum_loss / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("my_loss", sum_loss / len(outputs), on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
     def test_step(self, batch, batch_idx):
         batch_x, batch_y = batch
@@ -97,6 +97,7 @@ class PromptMask(pl.LightningModule):
         out = np.array(out)
         y = np.array(y)
         self.acc = (np.sum(out == y)) / len(out)
+        self.log("acc", self.acc)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=cfg['learning_rate'])
