@@ -10,7 +10,6 @@ from torch.autograd import Variable
 import pytorch_lightning as pl
 import os
 
-
 class PromptMask(pl.LightningModule):
     def __init__(self, answer_map):
         super(PromptMask, self).__init__()
@@ -31,7 +30,9 @@ class PromptMask(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         batch_x, batch_y = batch
-        batch_x, batch_y = Variable(batch_x).long, Variable(batch_y).long()
+
+        batch_x, batch_y = Variable(batch_x), Variable(batch_y)
+        batch_x, batch_y = torch.tensor(batch_x), torch.tensor(batch_y)
 
         output = self(batch_x)
         criterion = nn.CrossEntropyLoss()
@@ -44,7 +45,8 @@ class PromptMask(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         batch_x, batch_y = batch
-        batch_x, batch_y = Variable(batch_x).long, Variable(batch_y).long()
+        batch_x, batch_y = Variable(batch_x), Variable(batch_y)
+        batch_x, batch_y = torch.tensor(batch_x), torch.tensor(batch_y)
 
         output = self(batch_x)
 
