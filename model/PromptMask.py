@@ -9,7 +9,13 @@ import os
 
 os.environ["TOKENIZERS_PARALLELISM"] = "true"
 os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
-device = torch.device(cfg['device'])
+if cfg['device'] != 'TPU':
+    device = torch.device(cfg['device'])
+else:
+    # for TPU
+    import torch_xla.core.xla_model as xm
+    device = xm.xla_device()
+    torch.set_default_tensor_type('torch.FloatTensor')
 
 class PromptMask(nn.Module):
     def __init__(self):
