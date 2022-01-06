@@ -128,7 +128,11 @@ for test_id in range(len(seeds)):
             loss = criterion(output, batch_y)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
-            optimizer.step()  # 更新权重
+            if cfg['device'] == 'TPU':
+                xm.optimizer_step(optimizer)
+                xm.mark_step()
+            else:
+                optimizer.step()  # 更新权重
             if cfg['optimizer'] == 'AdamW':
                 scheduler.step()
             optimizer.zero_grad()  # 清空梯度缓存
