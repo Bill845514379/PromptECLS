@@ -1,98 +1,65 @@
-
-import torch
-import torch.optim as optim
-import torch.nn as nn
-from pytorch_transformers import RobertaForMaskedLM
-from pytorch_transformers.modeling_bert import BertLayerNorm
-from config.cfg import cfg, path, hyper_roberta
-import time
-from torch.autograd import Variable
-import pytorch_lightning as pl
+import pandas as pd
+import numpy as np
+from torch.utils.data import DataLoader, TensorDataset
+from common.text2id import X_data2id, get_answer_id
 import os
+import torch
+from config.cfg import cfg, path, hyper_roberta
+from common.load_data import load_data, tokenizer, data_split, generate_template
+from model.PromptMask import PromptMask
+import torch.optim as optim
+from transformers import AdamW, get_linear_schedule_with_warmup
+import torch.nn as nn
+from torch.autograd import Variable
+from common.metric import ScorePRF
+from common.set_random_seed import setup_seed
+import pytorch_lightning as pl
+import time
 
-class PromptMask(pl.LightningModule):
-    def __init__(self, answer_map):
-        super(PromptMask, self).__init__()
-        self.answer_map = answer_map
+print('data preprocessing ...')
+pos_X, pos_y = load_data(path['pos_path'])
+train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg['K'], cfg['Kt'])
+neg_X, neg_y = load_data(path['neg_path'])
+train_neg_X, train_neg_y, test_neg_X, test_neg_y = data_split(neg_X, neg_y, cfg['K'], cfg['Kt'])
 
-        self.roberta = RobertaForMaskedLM.from_pretrained(path['roberta_path'])
+train_X0 = np.hstack([train_pos_X, train_neg_X])
+train_y0 = np.hstack([train_pos_y, train_neg_y])
+test_X0 = np.hstack([test_pos_X, test_neg_X])
+test_y0 = np.hstack([test_pos_y, test_neg_y])
 
+train_X, train_y = generate_template(train_X0, train_X0, train_y0, train_y0)
+test_X, test_y = generate_template(test_X0, train_X0, test_y0, train_y0)
 
-    def forward(self, input_x):
-        mask0 = (input_x == 50264)
-        mask1 = (input_x != 1).type(torch.long)
+train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
+train_y, answer_map = get_answer_id(train_y, tokenizer)
+test_y, _ = get_answer_id(test_y, tokenizer)
 
-        input_x = self.roberta(input_x, attention_mask=mask1)
-        x = input_x[0]
-        x = x[mask0]
+train_X, train_y = torch.tensor(train_X), torch.tensor(train_y)
+test_X, test_y = torch.tensor(test_X), torch.tensor(test_y)
 
-        return x
+train_data = TensorDataset(train_X, train_y)
+test_data = TensorDataset(test_X, test_y)
 
-    def training_step(self, batch, batch_idx):
-        batch_x, batch_y = batch
+loader_train = DataLoader(
+    dataset=train_data,
+    batch_size=cfg['train_batch_size'],
+    shuffle=True,
+    num_workers=4,
+    drop_last=False
+)
 
-        batch_x, batch_y = Variable(batch_x), Variable(batch_y)
-        batch_x, batch_y = batch_x.long(), batch_y.long()
+loader_test = DataLoader(
+    dataset=test_data,
+    batch_size=cfg['K'] * 2,
+    shuffle=False,
+    num_workers=4,
+    drop_last=False
+)
 
-        output = self(batch_x)
-        criterion = nn.CrossEntropyLoss()
-        loss = criterion(output, batch_y)
-        self.log("train_loss", loss)
-        return loss
+print('start training ... ')
+net = PromptMask(answer_map)
 
-    def training_epoch_end(self, outputs):
-        sum_loss = 0
-        for i in range(len(outputs)):
-            sum_loss += outputs
-            
-        self.log("my_loss", sum_loss / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
-
-    def test_step(self, batch, batch_idx):
-        batch_x, batch_y = batch
-
-        batch_x, batch_y = Variable(batch_x), Variable(batch_y)
-        batch_x, batch_y = batch_x.long(), batch_y.long()
-
-        output = self(batch_x)
-
-        _, pred = torch.max(output, dim=1)
-
-        pred = pred.cpu().detach().numpy()
-        batch_y = batch_y.cpu().detach().numpy()
-
-        # for j in range(pred.shape[0]):
-        #     label_out.append(pred[j])
-        #     label_y.append(batch_y[j])
-        pos_cc, neg_cc = 0, 0
-        for j in range(cfg['K']):
-            if pred[j] == self.answer_map[1]:
-                pos_cc += 1
-        for j in range(cfg['K'], pred.shape[0]):
-            if pred[j] == self.answer_map[1]:
-                neg_cc += 1
-
-        label_out, label_y = -1, -1
-        if pos_cc >= neg_cc:
-            label_out = 1
-        else:
-            label_out = 0
-
-        if batch_y[0] == self.answer_map[1]:
-            label_y = 1
-        else:
-            label_y = 0
-
-        return label_out, label_y
-
-    def test_epoch_end(self, outputs):
-        out, y = [], []
-        print(outputs)
-
-    def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=cfg['learning_rate'])
-        return optimizer
-
-
-
-
-
+trainer = pl.Trainer(tpu_cores=8, max_epochs=10)
+trainer.fit(net, loader_train)
+print('start testing ... ')
+trainer.test(net, loader_test)
