@@ -7,9 +7,9 @@ from config.cfg import cfg, path, hyper_roberta
 from torch.autograd import Variable
 import os
 
-os.environ["TOKENIZERS_PARALLELISM"] = "true"
-os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
 if cfg['device'] != 'TPU':
+    os.environ["TOKENIZERS_PARALLELISM"] = "true"
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
     device = torch.device(cfg['device'])
 else:
     # for TPU
