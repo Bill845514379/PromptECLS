@@ -121,20 +121,25 @@ for test_id in range(len(seeds)):
             net.train()
             batch_x, batch_y = Variable(batch_x).long(), Variable(batch_y).long()
             batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-
+            
+            print('ok1')
             output = net(batch_x)
+            print('ok2')
             criterion = nn.CrossEntropyLoss()
+            print('ok3')
             loss = criterion(output, batch_y)
+            print('ok4')
             loss.backward()
+            print('ok5')
             torch.nn.utils.clip_grad_norm_(net.parameters(), 1.0)
             optimizer.step()  # 更新权重
-
+            print('ok6')
             if cfg['optimizer'] == 'AdamW':
                 scheduler.step()
             optimizer.zero_grad()  # 清空梯度缓存
             ave_loss += loss
             batch += 1
-
+            print('ok7')
             if batch % 2 == 0:
                 print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
                                                                                          len(loader_train),
