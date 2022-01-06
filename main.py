@@ -62,7 +62,7 @@ acc_array = []
 seeds = [10, 100, 1000, 2000, 4000]
 average_acc = 0
 for test_id in range(len(seeds)):
-    print('~~~~~~~~~~~~~ 第', test_id+1,'次测试 ~~~~~~~~~~~~~~~~~~~')
+    print('~~~~~~~~~~~~~ 第', test_id+1, '次测试 ~~~~~~~~~~~~~~~~~~~')
     setup_seed(seeds[test_id])
 
     net = PromptMask()
@@ -160,21 +160,24 @@ for test_id in range(len(seeds)):
                 pred = pred.cpu().detach().numpy()
                 batch_y = batch_y.cpu().detach().numpy()
 
-                pos_cc, neg_cc = 0, 0
-                for j in range(pred.shape[0] // 2):
-                    if pred[j] == answer_map[1]:
-                        pos_cc += 1
-                for j in range(pred.shape[0] // 2, pred.shape[0]):
-                    if pred[j] == answer_map[1]:
-                        neg_cc += 1
-                if pos_cc >= neg_cc:
-                    label_out.append(1)
-                else:
-                    label_out.append(0)
-                if batch_y[0] == 1:
-                    label_y.append(1)
-                else:
-                    label_y.append(0)
+                for j in range(pred.shape[0]):
+                    label_out.append(pred[j])
+                    label_y.append(batch_y[j])
+                # pos_cc, neg_cc = 0, 0
+                # for j in range(cfg['K']):
+                #     if pred[j] == answer_map[1]:
+                #         pos_cc += 1
+                # for j in range(cfg['K'], pred.shape[0]):
+                #     if pred[j] == answer_map[1]:
+                #         neg_cc += 1
+                # if pos_cc >= neg_cc:
+                #     label_out.append(1)
+                # else:
+                #     label_out.append(0)
+                # if batch_y[0] == 1:
+                #     label_y.append(1)
+                # else:
+                #     label_y.append(0)
 
             label_out = np.array(label_out)
             label_y = np.array(label_y)
