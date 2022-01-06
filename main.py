@@ -24,14 +24,14 @@ train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg[
 neg_X, neg_y = load_data(path['neg_path'])
 train_neg_X, train_neg_y, test_neg_X, test_neg_y = data_split(neg_X, neg_y, cfg['K'], cfg['Kt'])
 
-train_X = np.hstack([train_pos_X, train_neg_X])
-train_y = np.hstack([train_pos_y, train_neg_y])
-test_X = np.hstack([test_pos_X, test_neg_X])
-test_y = np.hstack([test_pos_y, test_neg_y])
+train_X0 = np.hstack([train_pos_X, train_neg_X])
+train_y0 = np.hstack([train_pos_y, train_neg_y])
+test_X0 = np.hstack([test_pos_X, test_neg_X])
+test_y0 = np.hstack([test_pos_y, test_neg_y])
 
-train_X, train_y = generate_template(train_X, train_X, train_y, train_y)
-test_X, test_y = generate_template(test_X, train_X, test_y, train_y)
-print(test_X[0:2*cfg['K']])
+train_X, train_y = generate_template(train_X0, train_X0, train_y0, train_y0)
+test_X, test_y = generate_template(test_X0, train_X0, test_y0, train_y0)
+
 
 train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
 train_y, answer_map = get_answer_id(train_y, tokenizer)
@@ -152,21 +152,16 @@ for test_id in range(len(seeds)):
                 net.eval()
                 batch_x, batch_y = Variable(batch_x).long(), Variable(batch_y).long()
                 batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-                print(batch_x)
-                print(batch_x.shape)
 
                 with torch.no_grad():
                      output = net(batch_x)
-                print(output.shape)
 
                 _, pred = torch.max(output, dim=1)
 
                 pred = pred.cpu().detach().numpy()
                 batch_y = batch_y.cpu().detach().numpy()
 
-                print(len(batch_y))
-                print(pred)
-                print(batch_y)
+
                 for j in range(pred.shape[0]):
                     label_out.append(pred[j])
                     label_y.append(batch_y[j])
