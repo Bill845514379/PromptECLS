@@ -2,6 +2,7 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
+import numpy as np
 from pytorch_transformers import RobertaForMaskedLM
 from pytorch_transformers.modeling_bert import BertLayerNorm
 from config.cfg import cfg, path, hyper_roberta
@@ -42,12 +43,10 @@ class PromptMask(pl.LightningModule):
         return loss
 
     def training_epoch_end(self, outputs):
-        print(outputs)
-        print(len(outputs))
-        sum_acc = 0
-        for key in outputs:
-            sum_acc += outputs[key]
-        self.log("my_loss", sum_acc / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        sum_loss = 0
+        for item in outputs:
+            sum_loss += item['loss']
+        self.log("my_loss", sum_loss / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
     def test_step(self, batch, batch_idx):
         batch_x, batch_y = batch
@@ -87,8 +86,17 @@ class PromptMask(pl.LightningModule):
         return label_out, label_y
 
     def test_epoch_end(self, outputs):
-        out, y = [], []
         print(outputs)
+
+        out, y = [], []
+
+        for item in outputs:
+            out.append(item['label_out'])
+            y.append(item['label_y'])
+
+        out = np.array(out)
+        y = np.array(y)
+        self.acc = (np.sum(out == y)) / len(out)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=cfg['learning_rate'])
