@@ -19,52 +19,51 @@ os.environ["TOKENIZERS_PARALLELISM"] = "true"
 os.environ["CUDA_VISIBLE_DEVICES"] = str(cfg['gpu_id'])
 device = torch.device(cfg['device'])
 
-pos_X, pos_y = load_data(path['pos_path'])
-train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg['K'], cfg['Kt'])
-neg_X, neg_y = load_data(path['neg_path'])
-train_neg_X, train_neg_y, test_neg_X, test_neg_y = data_split(neg_X, neg_y, cfg['K'], cfg['Kt'])
-
-train_X0 = np.hstack([train_pos_X, train_neg_X])
-train_y0 = np.hstack([train_pos_y, train_neg_y])
-test_X0 = np.hstack([test_pos_X, test_neg_X])
-test_y0 = np.hstack([test_pos_y, test_neg_y])
-
-train_X, train_y = generate_template(train_X0, train_X0, train_y0, train_y0)
-test_X, test_y = generate_template(test_X0, train_X0, test_y0, train_y0)
-
-
-train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
-train_y, answer_map = get_answer_id(train_y, tokenizer)
-test_y, _ = get_answer_id(test_y, tokenizer)
-
-train_X, train_y = torch.tensor(train_X), torch.tensor(train_y)
-test_X, test_y = torch.tensor(test_X), torch.tensor(test_y)
-
-train_data = TensorDataset(train_X, train_y)
-test_data = TensorDataset(test_X, test_y)
-
-loader_train = DataLoader(
-    dataset=train_data,
-    batch_size=cfg['train_batch_size'],
-    shuffle=True,
-    num_workers=0,
-    drop_last=False
-)
-
-loader_test = DataLoader(
-    dataset=test_data,
-    batch_size=cfg['K'] * 2,
-    shuffle=False,
-    num_workers=0,
-    drop_last=False
-)
-
 acc_array = []
 seeds = [10, 100, 1000, 2000, 4000]
 average_acc = 0
 for test_id in range(len(seeds)):
     print('~~~~~~~~~~~~~ 第', test_id+1, '次测试 ~~~~~~~~~~~~~~~~~~~')
     setup_seed(seeds[test_id])
+
+    pos_X, pos_y = load_data(path['pos_path'])
+    train_pos_X, train_pos_y, test_pos_X, test_pos_y = data_split(pos_X, pos_y, cfg['K'], cfg['Kt'])
+    neg_X, neg_y = load_data(path['neg_path'])
+    train_neg_X, train_neg_y, test_neg_X, test_neg_y = data_split(neg_X, neg_y, cfg['K'], cfg['Kt'])
+
+    train_X0 = np.hstack([train_pos_X, train_neg_X])
+    train_y0 = np.hstack([train_pos_y, train_neg_y])
+    test_X0 = np.hstack([test_pos_X, test_neg_X])
+    test_y0 = np.hstack([test_pos_y, test_neg_y])
+
+    train_X, train_y = generate_template(train_X0, train_X0, train_y0, train_y0)
+    test_X, test_y = generate_template(test_X0, train_X0, test_y0, train_y0)
+
+    train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
+    train_y, answer_map = get_answer_id(train_y, tokenizer)
+    test_y, _ = get_answer_id(test_y, tokenizer)
+
+    train_X, train_y = torch.tensor(train_X), torch.tensor(train_y)
+    test_X, test_y = torch.tensor(test_X), torch.tensor(test_y)
+
+    train_data = TensorDataset(train_X, train_y)
+    test_data = TensorDataset(test_X, test_y)
+
+    loader_train = DataLoader(
+        dataset=train_data,
+        batch_size=cfg['train_batch_size'],
+        shuffle=True,
+        num_workers=0,
+        drop_last=False
+    )
+
+    loader_test = DataLoader(
+        dataset=test_data,
+        batch_size=cfg['K'] * 2,
+        shuffle=False,
+        num_workers=0,
+        drop_last=False
+    )
 
     net = PromptMask()
     net = net.to(device)
