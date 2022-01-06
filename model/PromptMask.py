@@ -41,7 +41,10 @@ class PromptMask(pl.LightningModule):
         return loss
 
     def training_epoch_end(self, outputs):
-        self.log("my_loss", outputs.mean(), on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        sum_acc = 0
+        for i in range(len(outputs)):
+            sum_acc += outputs[i]
+        self.log("my_loss", sum_acc / len(outputs), on_step=True, on_epoch=True, prog_bar=True, logger=True)
 
     def test_step(self, batch, batch_idx):
         batch_x, batch_y = batch
