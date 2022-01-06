@@ -32,7 +32,7 @@ class PromptMask(pl.LightningModule):
     def training_step(self, batch, batch_idx):
         batch_x, batch_y = batch
         batch_x, batch_y = torch.tensor(batch_x).long(), torch.tensor(batch_y).long()
-        
+
         output = self(batch_x)
         criterion = nn.CrossEntropyLoss()
         loss = criterion(output, batch_y)
@@ -44,7 +44,8 @@ class PromptMask(pl.LightningModule):
 
     def test_step(self, batch, batch_idx):
         batch_x, batch_y = batch
-        
+        batch_x, batch_y = torch.tensor(batch_x).long(), torch.tensor(batch_y).long()
+
         output = self(batch_x)
 
         _, pred = torch.max(output, dim=1)
