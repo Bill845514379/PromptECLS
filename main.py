@@ -31,6 +31,7 @@ test_y = np.hstack([test_pos_y, test_neg_y])
 
 train_X, train_y = generate_template(train_X, train_X, train_y, train_y)
 test_X, test_y = generate_template(test_X, train_X, test_y, train_y)
+print(test_X[0:2*cfg['K']])
 
 train_X, test_X = X_data2id(train_X, tokenizer), X_data2id(test_X, tokenizer)
 train_y, answer_map = get_answer_id(train_y, tokenizer)
