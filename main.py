@@ -185,6 +185,7 @@ for test_id in range(len(seeds)):
                     label_out.append(1)
                 else:
                     label_out.append(0)
+                print(batch_y)
                 if batch_y[0] == 1:
                     label_y.append(1)
                 else:
