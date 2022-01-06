@@ -159,7 +159,10 @@ for test_id in range(len(seeds)):
 
                 pred = pred.cpu().detach().numpy()
                 batch_y = batch_y.cpu().detach().numpy()
-
+                
+                print(len(batch_y))
+                print(pred)
+                print(batch_y)
                 for j in range(pred.shape[0]):
                     label_out.append(pred[j])
                     label_y.append(batch_y[j])
