@@ -58,6 +58,6 @@ loader_test = DataLoader(
 
 net = PromptMask(answer_map)
 
-trainer = pl.Trainer()
+trainer = pl.Trainer(tpu_cores=8, max_epochs=10)
 trainer.fit(net, loader_train)
 trainer.test(net, loader_test)
