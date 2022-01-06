@@ -31,7 +31,7 @@ class PromptMask(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         batch_x, batch_y = batch
-        print(batch_x)
+        print(batch_x.shape)
         output = self(batch_x)
         criterion = nn.CrossEntropyLoss()
         loss = criterion(output, batch_y)
