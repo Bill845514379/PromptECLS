@@ -57,7 +57,7 @@ loader_test = DataLoader(
     drop_last=False
 )
 
-net = PromptMask()
+net = PromptMask(answer_map)
 
 trainer = pl.Trainer()
 trainer.fit(net, train_data)
