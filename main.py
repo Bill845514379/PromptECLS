@@ -64,7 +64,7 @@ net = PromptMask(answer_map)
 if cfg['device'] == 'TPU':
     trainer = pl.Trainer(tpu_cores=8, max_epochs=cfg['epoch'])
 else:
-    trainer = pl.Trainer(gups=1, max_epochs=cfg['epoch'])
+    trainer = pl.Trainer(gpus=1, max_epochs=cfg['epoch'])
 
 trainer.fit(net, loader_train)
 print('start testing ... ')
