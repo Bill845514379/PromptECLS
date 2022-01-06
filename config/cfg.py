@@ -4,7 +4,7 @@ cfg = {
     'train_batch_size': 4,
     'test_batch_size': 32,
     'learning_rate': 1e-5,
-    'epoch': 10,
+    'epoch': 5,
     'K': 8,
     'Kt': 8,
     # 'template': '[X1] [X2]? [MASK].',
