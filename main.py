@@ -145,14 +145,14 @@ for test_id in range(len(seeds)):
                 print('ok9', batch)
                 print('ok10', len(loader_train))
                 print('ok11', round(time.time() - time0, 4))
-                print('ok12', loss)
+                # print('ok12', loss)
                 print('ok13', optimizer.param_groups[0]['lr'])
-                print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
-                                                                                         len(loader_train),
-                                                                                         round(time.time() - time0, 4),
-                                                                                         loss,
-                                                                                         optimizer.param_groups[
-                                                                                             0]['lr']))
+                # print('epoch:{}/{},batch:{}/{},time:{}, loss:{},learning_rate:{}'.format(i + 1, epoch, batch,
+                #                                                                          len(loader_train),
+                #                                                                          round(time.time() - time0, 4),
+                #                                                                          loss,
+                #                                                                          optimizer.param_groups[
+                #                                                                              0]['lr']))
         # scheduler.step(ave_loss)
         print('------------------ epoch:{} ----------------'.format(i + 1))
         print('train_average_loss{}'.format(ave_loss / len(loader_train)))
