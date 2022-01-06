@@ -32,7 +32,7 @@ class PromptMask(pl.LightningModule):
         batch_x, batch_y = batch
 
         batch_x, batch_y = Variable(batch_x), Variable(batch_y)
-        batch_x, batch_y = torch.tensor(batch_x).long(), torch.tensor(batch_y).long()
+        batch_x, batch_y = torch.tensor(batch_x.clone().detach()).long(), torch.tensor(batch_y.clone().detach()).long()
 
         output = self(batch_x)
         criterion = nn.CrossEntropyLoss()
@@ -47,7 +47,7 @@ class PromptMask(pl.LightningModule):
         batch_x, batch_y = batch
 
         batch_x, batch_y = Variable(batch_x), Variable(batch_y)
-        batch_x, batch_y = torch.tensor(batch_x).long(), torch.tensor(batch_y).long()
+        batch_x, batch_y = torch.tensor(batch_x.clone().detach()).long(), torch.tensor(batch_y.clone().detach()).long()
         output = self(batch_x)
 
         _, pred = torch.max(output, dim=1)
