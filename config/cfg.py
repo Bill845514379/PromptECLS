@@ -4,13 +4,13 @@ cfg = {
     'train_batch_size': 8,
     'test_batch_size': 32,
     'learning_rate': 1e-5,
-    'epoch': 5,
+    'epoch': 10,
     'K': 8,
     'Kt': 100,
     # 'template': '[X1] [X2]? [MASK].',
     'template': '[X1] ? [MASK] , [X2]',
     'answer': ['No', 'Yes'],
-    'device': 'cuda',
+    'device': 'TPU',
     'optimizer': 'Adam',
     'word_size': 50265
 }
