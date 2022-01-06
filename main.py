@@ -140,7 +140,7 @@ for test_id in range(len(seeds)):
             ave_loss += loss
             batch += 1
             print('ok7')
-            if batch % 8 == 0:
+            if batch % 1 == 0:
                 print('ok8', epoch)
                 print('ok9', batch)
                 print('ok10', len(loader_train))
